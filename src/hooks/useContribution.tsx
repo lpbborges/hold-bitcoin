@@ -2,7 +2,6 @@ import { createContext, useEffect, useState, ReactNode, useContext } from 'react
 import { v4 as uuidV4 } from 'uuid';
 
 import { CONTRIBUTIONS_STORAGE_KEY } from '../constants';
-import { usePriceConsult } from './usePriceConsult';
 
 interface Contribution {
   id: string;
@@ -10,7 +9,6 @@ interface Contribution {
   amount: number;
   price: number;
   coinPurchased: number;
-  totalValue: number;
 }
 
 type ContributionInput = Omit<Contribution, 'id' | 'coinPurchased' | 'totalValue'>;
@@ -31,8 +29,6 @@ const ContributionsContext = createContext<ContributionsContextData>(
 export function ContributionsProvider({ children }: ContributionProviderProps) {
   const [contributions, setContributions] = useState<Contribution[]>([]);
 
-  const { bitcoinPriceInUsd } = usePriceConsult();
-
   useEffect(() => {
     function loadContributions() {
       const contributions = localStorage.getItem(CONTRIBUTIONS_STORAGE_KEY);
@@ -47,13 +43,11 @@ export function ContributionsProvider({ children }: ContributionProviderProps) {
 
   async function createContribution(contributionInput: ContributionInput) {
     const coinPurchased = contributionInput.amount / contributionInput.price;
-    const totalValue = coinPurchased * bitcoinPriceInUsd;
 
     const contribution = {
       ...contributionInput,
       id: uuidV4(),
       coinPurchased,
-      totalValue
     };
 
     const contributionsToStore = [...contributions, contribution];

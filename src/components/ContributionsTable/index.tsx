@@ -1,26 +1,31 @@
 import { useMemo } from 'react';
 
 import { useContributions } from '../../hooks/useContribution';
+import { usePriceConsult } from '../../hooks/usePriceConsult';
 import { formatCurrency, formatDate } from '../../utils/formats';
 
 import { Container } from './styles';
 
 export function ContributionsTable() {
   const { contributions } = useContributions();
+  const { bitcoinPriceInUsd } = usePriceConsult();
 
   const formattedContributions = useMemo(() => {
     return contributions.map(contribution => {
+      const totalValue = contribution.coinPurchased * bitcoinPriceInUsd;
+      const isPositive = totalValue > contribution.amount;
+
       return {
         ...contribution,
         coinPurchased: contribution.coinPurchased.toFixed(8),
         buyDate: formatDate(new Date(contribution.buyDate).getTime() + 86400000),
         amount: formatCurrency(contribution.amount),
         price: formatCurrency(contribution.price),
-        totalValue: formatCurrency(contribution.totalValue),
-        isPositive: contribution.totalValue > contribution.amount,
+        totalValue: formatCurrency(totalValue),
+        isPositive,
       }
-    })
-  }, [contributions]);
+    });
+  }, [bitcoinPriceInUsd, contributions]);
 
 
   return (

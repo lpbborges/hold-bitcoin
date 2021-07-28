@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useContributions } from '../../hooks/useContribution';
+import { usePriceConsult } from '../../hooks/usePriceConsult';
 import { formatCurrency } from '../../utils/formats';
 import { Container } from './styles';
 
@@ -12,15 +13,15 @@ interface SummaryContributions {
 
 export function Summary() {
   const { contributions } = useContributions();
+  const { bitcoinPriceInUsd } = usePriceConsult();
 
   const summaryData = useMemo(() => {
     const summaryContributions = contributions.reduce((summaryContributions, contribution) => {
-
       return {
         totalContributions: summaryContributions.totalContributions + contribution.amount,
         coinBalance: summaryContributions.coinBalance + contribution.coinPurchased,
         profit: 0,
-        balance: summaryContributions.balance + contribution.totalValue,
+        balance: summaryContributions.balance + (contribution.coinPurchased * bitcoinPriceInUsd),
       }
     }, {
       totalContributions: 0,
@@ -28,8 +29,6 @@ export function Summary() {
       balance: 0,
       coinBalance: 0
     } as SummaryContributions);
-
-    console.log(summaryContributions);
 
     return {
       totalContributions: formatCurrency(summaryContributions.totalContributions),
@@ -39,7 +38,7 @@ export function Summary() {
         ? ((summaryContributions.balance / summaryContributions.totalContributions) - 1) * 100
         : 0).toFixed(2),
     };
-  }, [contributions])
+  }, [bitcoinPriceInUsd, contributions])
 
   return (
     <Container>
