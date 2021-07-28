@@ -1,0 +1,1 @@
+export const CONTRIBUTIONS_STORAGE_KEY = "@HoldBitcoin:contributions";
