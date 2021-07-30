@@ -1,5 +1,8 @@
 import { createContext, useEffect, useState, ReactNode, useContext } from 'react';
+
 import { api } from '../services/api';
+
+import { useTick } from './useTick';
 
 interface PriceConsultContextData {
   bitcoinPriceInUsd: number;
@@ -14,7 +17,9 @@ const PriceConsultContext = createContext<PriceConsultContextData>(
 );
 
 export function PriceConsultProvider({ children }: ContributionProviderProps) {
+  const TIME_TO_UPDATE_PRICE_IN_SECONDS = 10;
   const [bitcoinPriceInUsd, setBitcoinPriceInUsd] = useState(0);
+  const { tick } = useTick();
 
   useEffect(() => {
     async function consultBitcoinPrice() {
@@ -25,8 +30,11 @@ export function PriceConsultProvider({ children }: ContributionProviderProps) {
       setBitcoinPriceInUsd(usd);
     }
 
-    consultBitcoinPrice();
-  }, []);
+    if (tick % TIME_TO_UPDATE_PRICE_IN_SECONDS === 0) {
+      console.log('teste');
+      consultBitcoinPrice();
+    }
+  }, [tick]);
 
   return (
     <PriceConsultContext.Provider value={{ bitcoinPriceInUsd }}>

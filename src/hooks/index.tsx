@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { ContributionsProvider } from './useContribution';
 import { PriceConsultProvider } from './usePriceConsult';
+import { TickProvider } from './useTick';
 
 interface AppProviderProps {
   children: ReactNode;
@@ -8,10 +9,12 @@ interface AppProviderProps {
 
 export function AppProvider({ children }: AppProviderProps) {
   return (
-    <PriceConsultProvider>
-      <ContributionsProvider>
-        {children}
-      </ContributionsProvider>
-    </PriceConsultProvider>
+    <TickProvider>
+      <PriceConsultProvider>
+        <ContributionsProvider>
+          {children}
+        </ContributionsProvider>
+      </PriceConsultProvider>
+    </TickProvider>
   )
 }
