@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, memo } from 'react';
 import Modal from 'react-modal';
 import { MdClose } from 'react-icons/md';
 
@@ -10,7 +10,7 @@ interface NewContributionModalProps {
   onRequestClose: () => void;
 }
 
-export function NewContributionModal({ isOpen, onRequestClose }: NewContributionModalProps) {
+function NewContributionModalComponent({ isOpen, onRequestClose }: NewContributionModalProps) {
   const [buyDate, setBuyDate] = useState('');
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState(0);
@@ -80,3 +80,5 @@ export function NewContributionModal({ isOpen, onRequestClose }: NewContribution
     </Modal>
   )
 }
+
+export const NewContributionModal = memo(NewContributionModalComponent);
