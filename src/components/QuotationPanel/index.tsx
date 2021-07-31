@@ -1,21 +1,24 @@
 import { useMemo } from 'react';
 import { usePriceConsult } from '../../hooks/usePriceConsult';
+import { useSettings } from '../../hooks/useSettings';
 
 import { formatCurrency } from '../../utils/formats';
 
 import { Container } from './styles';
 
 export function QuotationPanel() {
-  const { bitcoinPriceInUsd } = usePriceConsult();
+  const { bitcoinPrice } = usePriceConsult();
+  const { settings } = useSettings();
+  const { currency } = settings;
 
-  const bitcoinPriceInUsdFormatted = useMemo(() => {
-    return formatCurrency(bitcoinPriceInUsd);
-  }, [bitcoinPriceInUsd])
+  const bitcoinPriceFormatted = useMemo(() => {
+    return formatCurrency(bitcoinPrice, currency);
+  }, [bitcoinPrice, currency])
 
   return (
     <Container>
       <h1>
-        {`Bitcoin hoje: ${bitcoinPriceInUsdFormatted}`}
+        {`Bitcoin hoje: ${bitcoinPriceFormatted}`}
       </h1>
     </Container>
   )

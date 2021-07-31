@@ -3,10 +3,10 @@ import Modal from 'react-modal';
 import { MdClose } from 'react-icons/md';
 import DatePicker from 'react-datepicker';
 
-import "react-datepicker/dist/react-datepicker.css";
-
 import { Container } from './styles';
 import { useContributions } from '../../hooks/useContribution';
+import { useSettings } from '../../hooks/useSettings';
+import { CurrencySymbolEnum } from '../../enum/CurrencySymbolEnum';
 
 interface NewContributionModalProps {
   isOpen: boolean;
@@ -15,24 +15,25 @@ interface NewContributionModalProps {
 
 function NewContributionModalComponent({ isOpen, onRequestClose }: NewContributionModalProps) {
   const [buyDate, setBuyDate] = useState(new Date());
-  const [amount, setAmount] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [amount, setAmount] = useState('');
+  const [price, setPrice] = useState('');
+  const { settings } = useSettings();
+  const { currency } = settings;
 
   const { createContribution } = useContributions();
-
 
   async function handleCreateNewContribution(event: FormEvent) {
     event.preventDefault();
 
     await createContribution({
       buyDate,
-      amount,
-      price,
+      amount: Number(amount || '0'),
+      price: Number(price || '0'),
     });
 
     setBuyDate(new Date());
-    setAmount(0);
-    setPrice(0);
+    setAmount('');
+    setPrice('');
 
     onRequestClose();
   }
@@ -62,17 +63,23 @@ function NewContributionModalComponent({ isOpen, onRequestClose }: NewContributi
           selected={buyDate}
           dateFormat="dd/MM/yyyy"
         />
-        <label>Aporte</label>
+        <label>Aporte {CurrencySymbolEnum[currency]}</label>
         <input
+          step="0.01"
+          min="0"
           type="number"
           value={amount}
-          onChange={event => setAmount(Number(event.target.value))}
+          onChange={event => setAmount(event.target.value)}
         />
-        <label>Cotação na data</label>
+        <label>
+          Cotação na data
+        </label>
         <input
           type="number"
+          step="0.01"
+          min="0"
           value={price}
-          onChange={event => setPrice(Number(Number(event.target.value).toFixed(8)))}
+          onChange={event => setPrice(event.target.value)}
         />
 
         <button

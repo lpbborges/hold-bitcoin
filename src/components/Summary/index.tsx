@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useContributions } from '../../hooks/useContribution';
 import { usePriceConsult } from '../../hooks/usePriceConsult';
+import { useSettings } from '../../hooks/useSettings';
 import { formatCurrency } from '../../utils/formats';
 import { Container } from './styles';
 
@@ -13,7 +14,9 @@ interface SummaryContributions {
 
 export function Summary() {
   const { contributions } = useContributions();
-  const { bitcoinPriceInUsd } = usePriceConsult();
+  const { bitcoinPrice } = usePriceConsult();
+  const { settings } = useSettings();
+  const { currency } = settings;
 
   const summaryData = useMemo(() => {
     const summaryContributions = contributions.reduce((summaryContributions, contribution) => {
@@ -21,7 +24,7 @@ export function Summary() {
         totalContributions: summaryContributions.totalContributions + contribution.amount,
         coinBalance: summaryContributions.coinBalance + contribution.coinPurchased,
         profit: 0,
-        balance: summaryContributions.balance + (contribution.coinPurchased * bitcoinPriceInUsd),
+        balance: summaryContributions.balance + (contribution.coinPurchased * bitcoinPrice),
       }
     }, {
       totalContributions: 0,
@@ -30,15 +33,16 @@ export function Summary() {
       coinBalance: 0
     } as SummaryContributions);
 
+    const coinBalance = summaryContributions.coinBalance.toFixed(8);
+    const profit = (((summaryContributions.balance / summaryContributions.totalContributions) - 1) * 100).toFixed(2);
+
     return {
-      totalContributions: formatCurrency(summaryContributions.totalContributions),
-      coinBalance: summaryContributions.coinBalance.toFixed(8),
-      balance: formatCurrency(summaryContributions.balance),
-      profit: (summaryContributions.totalContributions > 0
-        ? ((summaryContributions.balance / summaryContributions.totalContributions) - 1) * 100
-        : 0).toFixed(2),
+      totalContributions: formatCurrency(summaryContributions.totalContributions, currency),
+      coinBalance: isNaN(Number(coinBalance)) ? '0.00000000' : coinBalance,
+      balance: formatCurrency(summaryContributions.balance, currency),
+      profit: isNaN(Number(profit)) ? '0.00' : profit,
     };
-  }, [bitcoinPriceInUsd, contributions])
+  }, [bitcoinPrice, contributions, currency])
 
   return (
     <Container>
