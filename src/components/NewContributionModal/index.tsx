@@ -1,6 +1,9 @@
 import { FormEvent, useState, memo } from 'react';
 import Modal from 'react-modal';
 import { MdClose } from 'react-icons/md';
+import DatePicker from 'react-datepicker';
+
+import "react-datepicker/dist/react-datepicker.css";
 
 import { Container } from './styles';
 import { useContributions } from '../../hooks/useContribution';
@@ -11,11 +14,12 @@ interface NewContributionModalProps {
 }
 
 function NewContributionModalComponent({ isOpen, onRequestClose }: NewContributionModalProps) {
-  const [buyDate, setBuyDate] = useState('');
+  const [buyDate, setBuyDate] = useState(new Date());
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState(0);
 
   const { createContribution } = useContributions();
+
 
   async function handleCreateNewContribution(event: FormEvent) {
     event.preventDefault();
@@ -26,7 +30,7 @@ function NewContributionModalComponent({ isOpen, onRequestClose }: NewContributi
       price,
     });
 
-    setBuyDate('');
+    setBuyDate(new Date());
     setAmount(0);
     setPrice(0);
 
@@ -53,10 +57,10 @@ function NewContributionModalComponent({ isOpen, onRequestClose }: NewContributi
           Cadastrar aporte
         </h2>
         <label>Data da compra</label>
-        <input
-          type="date"
-          value={buyDate}
-          onChange={event => setBuyDate(event.target.value)}
+        <DatePicker
+          onChange={date => setBuyDate(date as Date)}
+          selected={buyDate}
+          dateFormat="dd/MM/yyyy"
         />
         <label>Aporte</label>
         <input

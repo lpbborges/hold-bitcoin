@@ -18,7 +18,7 @@ export function ContributionsTable() {
       return {
         ...contribution,
         coinPurchased: contribution.coinPurchased.toFixed(8),
-        buyDate: formatDate(new Date(contribution.buyDate).getTime() + 86400000),
+        buyDate: formatDate(new Date(contribution.buyDate).getTime()),
         amount: formatCurrency(contribution.amount),
         price: formatCurrency(contribution.price),
         totalValue: formatCurrency(totalValue),
