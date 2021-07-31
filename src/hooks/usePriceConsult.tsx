@@ -31,7 +31,6 @@ export function PriceConsultProvider({ children }: ContributionProviderProps) {
     }
 
     if (tick % TIME_TO_UPDATE_PRICE_IN_SECONDS === 0) {
-      console.log('teste');
       consultBitcoinPrice();
     }
   }, [tick]);

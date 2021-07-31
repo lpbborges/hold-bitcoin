@@ -89,4 +89,8 @@ export const GlobalStyle = createGlobalStyle`
 
     filter: brightness(0.8);
   }
+
+  .react-datepicker-wrapper {
+    display: block;
+  }
 `;

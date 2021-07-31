@@ -5,13 +5,13 @@ import { CONTRIBUTIONS_STORAGE_KEY } from '../constants';
 
 interface Contribution {
   id: string;
-  buyDate: string;
+  buyDate: Date;
   amount: number;
   price: number;
   coinPurchased: number;
 }
 
-type ContributionInput = Omit<Contribution, 'id' | 'coinPurchased' | 'totalValue'>;
+type ContributionInput = Omit<Contribution, 'id' | 'coinPurchased'>;
 
 interface ContributionsContextData {
   contributions: Contribution[];
