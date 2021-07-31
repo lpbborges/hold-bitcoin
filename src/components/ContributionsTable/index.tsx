@@ -2,30 +2,34 @@ import { useMemo } from 'react';
 
 import { useContributions } from '../../hooks/useContribution';
 import { usePriceConsult } from '../../hooks/usePriceConsult';
+import { useSettings } from '../../hooks/useSettings';
 import { formatCurrency, formatDate } from '../../utils/formats';
 
 import { Container } from './styles';
 
 export function ContributionsTable() {
   const { contributions } = useContributions();
-  const { bitcoinPriceInUsd } = usePriceConsult();
+  const { bitcoinPrice } = usePriceConsult();
+  const { settings } = useSettings();
+  const { currency } = settings;
 
   const formattedContributions = useMemo(() => {
     return contributions.map(contribution => {
-      const totalValue = contribution.coinPurchased * bitcoinPriceInUsd;
+      const totalValue = contribution.coinPurchased * bitcoinPrice;
       const isPositive = totalValue > contribution.amount;
 
       return {
         ...contribution,
-        coinPurchased: contribution.coinPurchased.toFixed(8),
+        coinPurchased: isNaN(contribution.coinPurchased)
+          ? contribution.coinPurchased.toFixed(8) : '0.00000000',
         buyDate: formatDate(new Date(contribution.buyDate).getTime()),
-        amount: formatCurrency(contribution.amount),
-        price: formatCurrency(contribution.price),
-        totalValue: formatCurrency(totalValue),
+        amount: formatCurrency(contribution.amount, currency),
+        price: formatCurrency(contribution.price, currency),
+        totalValue: formatCurrency(totalValue, currency),
         isPositive,
       }
     });
-  }, [bitcoinPriceInUsd, contributions]);
+  }, [bitcoinPrice, contributions, currency]);
 
 
   return (
